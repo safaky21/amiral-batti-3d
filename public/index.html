@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amiral Battı Oyunu</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    <div id="ui-container">
+        <header class="game-header">
+            <div
+                style="display:flex; justify-content:space-between; width:100%; align-items: center; margin-bottom: 0.5rem;">
+                <h1 class="glitch-title" style="margin-bottom:0;">AMİRAL BATTI OYUNU</h1>
+                <button id="btn-settings" class="cyber-button"
+                    style="padding: 0.3rem 0.5rem; width: auto; font-size: 0.8rem; flex:none; background: rgba(11, 12, 16, 0.9);">⚙️
+                    AYARLAR</button>
+            </div>
+            <p>Bağlantı: Aktif <span id="user-display" style="float:right; color:#ffcc00; font-weight:bold;"></span></p>
+        </header>
+
+
+        <div id="settings-modal" class="panel"
+            style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index: 1000; width: 300px;">
+            <h2>Sistem Ayarları</h2>
+            <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #c5c6c7; font-size: 0.9rem;">Oyun Menü Müziği</span>
+                <button id="btn-toggle-music" class="cyber-button"
+                    style="width:80px; margin-top:0; padding: 0.4rem;">AÇIK</button>
+            </div>
+            <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #c5c6c7; font-size: 0.9rem;">Savaş Ses Efektleri</span>
+                <button id="btn-toggle-sfx" class="cyber-button"
+                    style="width:80px; margin-top:0; padding: 0.4rem;">AÇIK</button>
+            </div>
+            <button id="btn-close-settings" class="cyber-button" style="width:100%; margin-top: 15px;">GERİ DÖN</button>
+        </div>
+
+
+        <div id="login-panel" class="panel">
+            <h2>Amiral Battı Sunucu Girişi</h2>
+            <input type="text" id="login-username" class="cyber-input" placeholder="Kullanıcı Adınız"
+                autocomplete="off">
+            <input type="password" id="login-password" class="cyber-input" placeholder="Parolanız"
+                style="margin-top: 10px;" autocomplete="off">
+            <div class="button-group">
+                <button id="btn-login" class="cyber-button">SİSTEME BAĞLAN</button>
+            </div>
+            <p style="font-size: 0.75rem; color: #45a29e; margin-top:10px; text-align:center;">
+                (Hesabınız yoksa girdiğiniz İsim ve Şifre ile anında yeni kayıt oluşturulur)
+            </p>
+            <p id="login-status" class="status-msg"></p>
+        </div>
+
+
+        <div id="lobby-container" style="display: none; flex-direction: row; gap: 20px; align-items: flex-start;">
+            <div id="room-panel" class="panel">
+                <h2>Haberleşme Radarı</h2>
+                <input type="text" id="room-input" class="cyber-input" placeholder="Şifreli Oda Kodunu Girin..."
+                    autocomplete="off">
+                <div class="button-group">
+                    <button id="btn-create" class="cyber-button">RADAR KUR</button>
+                    <button id="btn-join" class="cyber-button">SİSTEME GİR</button>
+                </div>
+                <div class="button-group" style="margin-top: 15px; border-top: 1px solid #45a29e; padding-top: 15px;">
+                    <button id="btn-bot" class="cyber-button"
+                        style="background: rgba(102, 252, 241, 0.2); color: #fff; width: 100%;">YAPAY ZEKAYA KARŞI OYNA
+                        (BOT)</button>
+                </div>
+                <p id="room-status" class="status-msg">Bağlantı bekleniyor...</p>
+            </div>
+
+            <div id="leaderboard-panel" class="panel" style="min-width: 250px;">
+                <h2>En İyi Amiraller</h2>
+                <ul id="lb-list">
+                    <li style="color:#c5c6c7; font-size:0.85rem;">Veriler yükleniyor...</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div id="planning-panel" class="panel" style="display: none;">
+            <h2>Gemi Yerleştirme Terminali</h2>
+            <p class="status-msg text-cyan">Gemilerinizi sol tık ile sürükleyin. Sağ tık ile yönünü çevirin
+                (Yatay/Dikey).</p>
+            <p id="placement-status" class="status-msg text-attention" style="margin-top:10px;">Lütfen bütün filoyu
+                tahtaya yerleştiriniz.</p>
+            <div class="button-group" style="margin-top:15px;">
+                <button id="btn-ready" class="cyber-button disabled" disabled>SAVAŞA HAZIR</button>
+            </div>
+        </div>
+
+
+        <div id="game-info" class="panel" style="display: none;">
+            <h2>Savaş Durumu</h2>
+            <p id="turn-info" class="text-attention">Savaş başlatılıyor...</p>
+            <div id="logs-container">
+                <ul id="log-list"></ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="canvas-container"></div>
+
+    <script type="module" src="main.js?v=2"></script>
+</body>
+
+</html>
